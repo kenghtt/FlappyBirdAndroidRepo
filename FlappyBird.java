@@ -63,7 +63,7 @@ public class FlappyBird extends ApplicationAdapter {
         } else {
             flapState = 0;
         }
-
+//yes
         batch.begin();
         //background starts on bottom left  0,0  then has width of GDX library of our screen and same as height
         batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

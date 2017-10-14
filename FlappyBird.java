@@ -17,6 +17,10 @@ public class FlappyBird extends ApplicationAdapter {
     int gameState = 0;
     double gravity = .01;
 
+    Texture topTube;
+    Texture bottomTube;
+    float gap =400;
+
 
     @Override
     public void create() {
@@ -26,14 +30,23 @@ public class FlappyBird extends ApplicationAdapter {
         birds[0] = new Texture("bird.png");
         birds[1] = new Texture("bird2.png");
         birdY = Gdx.graphics.getHeight() / 2 - birds[0].getHeight() / 2;
+
+        topTube = new Texture("toptube.png");
+        bottomTube =new Texture("bottomtube.png");
     }
 
     @Override
     public void render() {
+        batch.begin();
+        //background starts on bottom left  0,0  then has width of GDX library of our screen and same as height
+        batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
 
         if (gameState != 0) {
 
+
+            batch.draw(topTube, Gdx.graphics.getWidth()/2 - topTube.getWidth()/2, Gdx.graphics.getHeight()/2 + gap/2);
+            batch.draw(bottomTube, Gdx.graphics.getWidth()/2-bottomTube.getWidth()/2, Gdx.graphics.getHeight()/2 - gap/2 - bottomTube.getHeight());
 
 
             if (Gdx.input.justTouched()) {
@@ -63,10 +76,6 @@ public class FlappyBird extends ApplicationAdapter {
         } else {
             flapState = 0;
         }
-//yes
-        batch.begin();
-        //background starts on bottom left  0,0  then has width of GDX library of our screen and same as height
-        batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         //make bird in centered, but it is centered at bottom left of the sprite, so need to subtract the width of bird
         batch.draw(birds[flapState], Gdx.graphics.getWidth() / 2 - birds[flapState].getWidth() / 2, birdY);
         batch.end();

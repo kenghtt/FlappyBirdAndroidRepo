@@ -5,6 +5,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.Random;
+
 public class FlappyBird extends ApplicationAdapter {
     SpriteBatch batch;
     Texture background;   //sprites
@@ -20,6 +22,11 @@ public class FlappyBird extends ApplicationAdapter {
     Texture topTube;
     Texture bottomTube;
     float gap =400;
+    float maxTubeOffset ;
+
+    Random randomGenerator;
+    float tubeOffset;
+
 
 
     @Override
@@ -33,6 +40,10 @@ public class FlappyBird extends ApplicationAdapter {
 
         topTube = new Texture("toptube.png");
         bottomTube =new Texture("bottomtube.png");
+
+         maxTubeOffset = Gdx.graphics.getHeight()/2 - gap/2 - 100;
+        randomGenerator = new Random();
+
     }
 
     @Override
@@ -45,21 +56,21 @@ public class FlappyBird extends ApplicationAdapter {
         if (gameState != 0) {
 
 
-            batch.draw(topTube, Gdx.graphics.getWidth()/2 - topTube.getWidth()/2, Gdx.graphics.getHeight()/2 + gap/2);
-            batch.draw(bottomTube, Gdx.graphics.getWidth()/2-bottomTube.getWidth()/2, Gdx.graphics.getHeight()/2 - gap/2 - bottomTube.getHeight());
-
-
             if (Gdx.input.justTouched()) {
                 velocity = -3;
+
+                tubeOffset = (randomGenerator.nextFloat() - 0.5f) * (Gdx.graphics.getHeight() - gap - 200);   //.nextFloat makes between 0-1
+
             }
+
+            batch.draw(topTube, Gdx.graphics.getWidth()/2 - topTube.getWidth()/2, Gdx.graphics.getHeight()/2 + gap/2 + tubeOffset);
+            batch.draw(bottomTube, Gdx.graphics.getWidth()/2-bottomTube.getWidth()/2, Gdx.graphics.getHeight()/2 - gap/2 - bottomTube.getHeight()+ tubeOffset);
+
 
             if(birdY > 0 || velocity < 0){  //prevents bird from falling below screen
                 velocity = velocity + gravity;
                 birdY-= velocity;
             }
-
-
-
 
 
         } else {

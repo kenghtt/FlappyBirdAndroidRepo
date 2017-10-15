@@ -21,12 +21,19 @@ public class FlappyBird extends ApplicationAdapter {
 
     Texture topTube;
     Texture bottomTube;
-    float gap =400;
-    float maxTubeOffset ;
+    float gap = 400;
+    float maxTubeOffset;
 
     Random randomGenerator;
-    float tubeOffset;
 
+    float tubeVelocityMovingLeft = 1;
+
+
+    int numberOfTubes = 4;
+    float[] tubeX = new float[numberOfTubes];
+    float[] tubeOffset = new float[numberOfTubes];
+
+    float distanceBetweenTubes;
 
 
     @Override
@@ -39,10 +46,22 @@ public class FlappyBird extends ApplicationAdapter {
         birdY = Gdx.graphics.getHeight() / 2 - birds[0].getHeight() / 2;
 
         topTube = new Texture("toptube.png");
-        bottomTube =new Texture("bottomtube.png");
+        bottomTube = new Texture("bottomtube.png");
 
-         maxTubeOffset = Gdx.graphics.getHeight()/2 - gap/2 - 100;
+        maxTubeOffset = Gdx.graphics.getHeight() / 2 - gap / 2 - 100;
         randomGenerator = new Random();
+        distanceBetweenTubes = Gdx.graphics.getWidth() ;  //Making games appear further apart
+
+
+
+        for(int i = 0; i < numberOfTubes; i++) {
+
+            tubeOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (Gdx.graphics.getHeight() - gap - 200);   //.nextFloat makes between 0-1
+
+            tubeX[i] = Gdx.graphics.getWidth() / 2 - topTube.getWidth() / 2 + i * distanceBetweenTubes;  //has 4 tubes to make it look like loop
+
+        }
+
 
     }
 
@@ -59,17 +78,27 @@ public class FlappyBird extends ApplicationAdapter {
             if (Gdx.input.justTouched()) {
                 velocity = -3;
 
-                tubeOffset = (randomGenerator.nextFloat() - 0.5f) * (Gdx.graphics.getHeight() - gap - 200);   //.nextFloat makes between 0-1
 
             }
 
-            batch.draw(topTube, Gdx.graphics.getWidth()/2 - topTube.getWidth()/2, Gdx.graphics.getHeight()/2 + gap/2 + tubeOffset);
-            batch.draw(bottomTube, Gdx.graphics.getWidth()/2-bottomTube.getWidth()/2, Gdx.graphics.getHeight()/2 - gap/2 - bottomTube.getHeight()+ tubeOffset);
+                for(int i = 0; i < numberOfTubes; i++){
+                    if(tubeX[i]< - topTube.getWidth()){
+
+                        tubeX[i] += numberOfTubes * distanceBetweenTubes;
+                    }
+                    else{
+                        tubeX[i] = tubeX[i] - tubeVelocityMovingLeft;  //moves tubes to left by speed - 1
+
+                    }
 
 
-            if(birdY > 0 || velocity < 0){  //prevents bird from falling below screen
+                batch.draw(topTube, tubeX[i], Gdx.graphics.getHeight() / 2 + gap / 2 + tubeOffset[i]);
+                batch.draw(bottomTube, tubeX[i], Gdx.graphics.getHeight() / 2 - gap / 2 - bottomTube.getHeight() + tubeOffset[i]);
+            }
+
+            if (birdY > 0 || velocity < 0) {  //prevents bird from falling below screen
                 velocity = velocity + gravity;
-                birdY-= velocity;
+                birdY -= velocity;
             }
 
 

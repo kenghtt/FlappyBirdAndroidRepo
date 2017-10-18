@@ -2,19 +2,24 @@ package com.jeremy.flappybird;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
 
 import java.util.Random;
 
 public class FlappyBird extends ApplicationAdapter {
     SpriteBatch batch;
     Texture background;   //sprites
+    ShapeRenderer shapeRenderer;
 
     Texture[] birds;
     int flapState = 0;  //shows state of which bird is current
     float birdY = 0;
     double velocity = 0;  //how fast bird moves
+    Circle birdCircle;
 
     int gameState = 0;
     double gravity = .01;
@@ -38,7 +43,12 @@ public class FlappyBird extends ApplicationAdapter {
 
     @Override
     public void create() {
+
         batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
+        birdCircle = new Circle();
+
+
         background = new Texture("bg.png");
         birds = new Texture[2];
         birds[0] = new Texture("bird.png");
@@ -50,11 +60,10 @@ public class FlappyBird extends ApplicationAdapter {
 
         maxTubeOffset = Gdx.graphics.getHeight() / 2 - gap / 2 - 100;
         randomGenerator = new Random();
-        distanceBetweenTubes = Gdx.graphics.getWidth() ;  //Making games appear further apart
+        distanceBetweenTubes = Gdx.graphics.getWidth();  //Making games appear further apart
 
 
-
-        for(int i = 0; i < numberOfTubes; i++) {
+        for (int i = 0; i < numberOfTubes; i++) {
 
             tubeOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (Gdx.graphics.getHeight() - gap - 200);   //.nextFloat makes between 0-1
 
@@ -76,20 +85,20 @@ public class FlappyBird extends ApplicationAdapter {
 
 
             if (Gdx.input.justTouched()) {
-                velocity = -3;
+                velocity = -2;
 
 
             }
 
-                for(int i = 0; i < numberOfTubes; i++){
-                    if(tubeX[i]< - topTube.getWidth()){
+            for (int i = 0; i < numberOfTubes; i++) {
+                if (tubeX[i] < -topTube.getWidth()) {
 
-                        tubeX[i] += numberOfTubes * distanceBetweenTubes;
-                    }
-                    else{
-                        tubeX[i] = tubeX[i] - tubeVelocityMovingLeft;  //moves tubes to left by speed - 1
+                    tubeX[i] += numberOfTubes * distanceBetweenTubes;
+                    tubeOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (Gdx.graphics.getHeight() - gap - 200);   //.nextFloat makes between 0-1
+                } else {
+                    tubeX[i] = tubeX[i] - tubeVelocityMovingLeft;  //moves tubes to left by speed - 1
 
-                    }
+                }
 
 
                 batch.draw(topTube, tubeX[i], Gdx.graphics.getHeight() / 2 + gap / 2 + tubeOffset[i]);
@@ -116,10 +125,26 @@ public class FlappyBird extends ApplicationAdapter {
         } else {
             flapState = 0;
         }
+
+
         //make bird in centered, but it is centered at bottom left of the sprite, so need to subtract the width of bird
         batch.draw(birds[flapState], Gdx.graphics.getWidth() / 2 - birds[flapState].getWidth() / 2, birdY);
         batch.end();
+
+        birdCircle.set(Gdx.graphics.getWidth() / 2, birdY + birds[flapState].getHeight() / 2, birds[flapState].getWidth() / 2);  // get center of screen
+
+
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(Color.RED);  //see color of shape
+        shapeRenderer.circle(birdCircle.x, birdCircle.y, birdCircle.radius); //Render a circle  //creating the circle i think
+        shapeRenderer.end();
+
     }
+
+
+}
+
+
 
 //
 //    @Override
@@ -127,4 +152,3 @@ public class FlappyBird extends ApplicationAdapter {
 //        batch.dispose();
 //        background.dispose();
 //    }
-}

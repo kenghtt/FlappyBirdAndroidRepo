@@ -2,18 +2,18 @@ package com.jeremy.flappybird;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
 
 import java.util.Random;
 
 public class FlappyBird extends ApplicationAdapter {
     SpriteBatch batch;
     Texture background;   //sprites
-    ShapeRenderer shapeRenderer;
+//    ShapeRenderer shapeRenderer;
 
     Texture[] birds;
     int flapState = 0;  //shows state of which bird is current
@@ -40,12 +40,15 @@ public class FlappyBird extends ApplicationAdapter {
 
     float distanceBetweenTubes;
 
+    Rectangle[] topTubeRectangles;
+    Rectangle[] bottomTubeRectangles;
+
 
     @Override
     public void create() {
 
         batch = new SpriteBatch();
-        shapeRenderer = new ShapeRenderer();
+//        shapeRenderer = new ShapeRenderer();
         birdCircle = new Circle();
 
 
@@ -62,13 +65,19 @@ public class FlappyBird extends ApplicationAdapter {
         randomGenerator = new Random();
         distanceBetweenTubes = Gdx.graphics.getWidth();  //Making games appear further apart
 
+        topTubeRectangles = new Rectangle[numberOfTubes];
+        bottomTubeRectangles = new Rectangle[numberOfTubes];
+
 
         for (int i = 0; i < numberOfTubes; i++) {
 
             tubeOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (Gdx.graphics.getHeight() - gap - 200);   //.nextFloat makes between 0-1
 
-            tubeX[i] = Gdx.graphics.getWidth() / 2 - topTube.getWidth() / 2 + i * distanceBetweenTubes;  //has 4 tubes to make it look like loop
+            //Has 4 tubes to make it look like loop and first tube always start on right
+            tubeX[i] = Gdx.graphics.getWidth() / 2 - topTube.getWidth() / 2 + Gdx.graphics.getWidth() + i * distanceBetweenTubes;
 
+            topTubeRectangles[i] = new Rectangle();
+            bottomTubeRectangles[i] = new Rectangle();
         }
 
 
@@ -103,6 +112,12 @@ public class FlappyBird extends ApplicationAdapter {
 
                 batch.draw(topTube, tubeX[i], Gdx.graphics.getHeight() / 2 + gap / 2 + tubeOffset[i]);
                 batch.draw(bottomTube, tubeX[i], Gdx.graphics.getHeight() / 2 - gap / 2 - bottomTube.getHeight() + tubeOffset[i]);
+
+
+                //x , y, weidth, and height for the size of the top rectangle pipes
+                topTubeRectangles[i] = new Rectangle(tubeX[i], Gdx.graphics.getHeight() / 2 + gap / 2 + tubeOffset[i], topTube.getWidth(), topTube.getHeight());
+                bottomTubeRectangles[i] = new Rectangle((tubeX[i]), Gdx.graphics.getHeight() / 2 - gap / 2 - bottomTube.getHeight() + tubeOffset[i], bottomTube.getWidth(), bottomTube.getHeight());
+
             }
 
             if (birdY > 0 || velocity < 0) {  //prevents bird from falling below screen
@@ -134,16 +149,30 @@ public class FlappyBird extends ApplicationAdapter {
         birdCircle.set(Gdx.graphics.getWidth() / 2, birdY + birds[flapState].getHeight() / 2, birds[flapState].getWidth() / 2);  // get center of screen
 
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(Color.RED);  //see color of shape
-        shapeRenderer.circle(birdCircle.x, birdCircle.y, birdCircle.radius); //Render a circle  //creating the circle i think
-        shapeRenderer.end();
+//        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+//        shapeRenderer.setColor(Color.RED);  //see color of shape
+//        shapeRenderer.circle(birdCircle.x, birdCircle.y, birdCircle.radius); //Render a circle  //creating the RED circle i think
+
+        for (int i = 0; i < numberOfTubes; i++) {
+            //creating the Red Rectangle pipes
+//            shapeRenderer.rect(tubeX[i], Gdx.graphics.getHeight() / 2 + gap / 2 + tubeOffset[i], topTube.getWidth(), topTube.getHeight());
+//            shapeRenderer.rect(tubeX[i], Gdx.graphics.getHeight() / 2 - gap / 2 - bottomTube.getHeight() + tubeOffset[i], bottomTube.getWidth(), bottomTube.getHeight());
+
+            //overlap circle and rectangle
+            if (Intersector.overlaps(birdCircle, topTubeRectangles[i]) || Intersector.overlaps(birdCircle, bottomTubeRectangles[i])) {
+                Gdx.app.log("Collision", "Shapes have Hit!!!");
+
+            }
+
+
+        }
+
+//        shapeRenderer.end();
 
     }
 
 
 }
-
 
 
 //

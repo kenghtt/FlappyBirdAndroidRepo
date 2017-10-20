@@ -13,7 +13,9 @@ import java.util.Random;
 public class FlappyBird extends ApplicationAdapter {
     SpriteBatch batch;
     Texture background;   //sprites
-//    ShapeRenderer shapeRenderer;
+    //    ShapeRenderer shapeRenderer;
+    int score = 0;
+    int scoringTube = 0;
 
     Texture[] birds;
     int flapState = 0;  //shows state of which bird is current
@@ -22,7 +24,7 @@ public class FlappyBird extends ApplicationAdapter {
     Circle birdCircle;
 
     int gameState = 0;
-    double gravity = .01;
+    double gravity = 2;    //was originally .01
 
     Texture topTube;
     Texture bottomTube;
@@ -31,7 +33,7 @@ public class FlappyBird extends ApplicationAdapter {
 
     Random randomGenerator;
 
-    float tubeVelocityMovingLeft = 1;
+    float tubeVelocityMovingLeft = 4;    //was originally 1
 
 
     int numberOfTubes = 4;
@@ -92,9 +94,20 @@ public class FlappyBird extends ApplicationAdapter {
 
         if (gameState != 0) {
 
+            //scoring system
+            if (tubeX[scoringTube] < Gdx.graphics.getWidth()/2) {
+                score++;
+                Gdx.app.log("Score", String.valueOf(score));
+                if(scoringTube < numberOfTubes -1){
+                    scoringTube++;
+                }
+                else
+                    scoringTube = 0;
+            }
+
 
             if (Gdx.input.justTouched()) {
-                velocity = -2;
+                velocity = -30;   //was originally -2
 
 
             }
@@ -104,6 +117,7 @@ public class FlappyBird extends ApplicationAdapter {
 
                     tubeX[i] += numberOfTubes * distanceBetweenTubes;
                     tubeOffset[i] = (randomGenerator.nextFloat() - 0.5f) * (Gdx.graphics.getHeight() - gap - 200);   //.nextFloat makes between 0-1
+
                 } else {
                     tubeX[i] = tubeX[i] - tubeVelocityMovingLeft;  //moves tubes to left by speed - 1
 

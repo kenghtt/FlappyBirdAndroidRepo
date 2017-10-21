@@ -2,7 +2,9 @@ package com.jeremy.flappybird;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
@@ -16,6 +18,7 @@ public class FlappyBird extends ApplicationAdapter {
     //    ShapeRenderer shapeRenderer;
     int score = 0;
     int scoringTube = 0;
+    BitmapFont font;
 
     Texture[] birds;
     int flapState = 0;  //shows state of which bird is current
@@ -52,6 +55,9 @@ public class FlappyBird extends ApplicationAdapter {
         batch = new SpriteBatch();
 //        shapeRenderer = new ShapeRenderer();
         birdCircle = new Circle();
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);   //Set Color Font
+        font.getData().setScale(10);    //Set Scale
 
 
         background = new Texture("bg.png");
@@ -156,9 +162,14 @@ public class FlappyBird extends ApplicationAdapter {
         }
 
 
-        //make bird in centered, but it is centered at bottom left of the sprite, so need to subtract the width of bird
+        //Make bird in centered, but it is centered at bottom left of the sprite, so need to subtract the width of bird
         batch.draw(birds[flapState], Gdx.graphics.getWidth() / 2 - birds[flapState].getWidth() / 2, birdY);
+
+        //Location of Score on bottom left
+        font.draw(batch, String.valueOf(score), 100, 200);
+
         batch.end();
+
 
         birdCircle.set(Gdx.graphics.getWidth() / 2, birdY + birds[flapState].getHeight() / 2, birds[flapState].getWidth() / 2);  // get center of screen
 
